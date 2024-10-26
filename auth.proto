@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/MarcusNelhams/part3_go/auth"; // Replace with your module path
+
+service AuthService {
+    rpc Ping(PingRequest) returns (PingResponse);
+}
+
+message PingRequest {
+    string client_id = 1;
+}
+
+message PingResponse {
+    string message = 1;
+}
+
