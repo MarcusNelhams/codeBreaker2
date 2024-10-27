@@ -3,60 +3,60 @@ import (
         "context"
         "net"
         "log"
-        "github.com/MarcusNelhams/part3/auth"
+        "github.com/MarcusNelhams/part3/auth_service"
         "google.golang.org/grpc"
 )
 
-type myAuthServer struct {
-        auth.UnimplementedAuthServiceServer
+type authServiceClient struct {
+        auth_service.UnimplementedAuthServiceServer
 }
 
-func (s myAuthServer) Authenticate(ctx context.Context, in *auth.AuthRequest) (*auth.AuthResponse, error) {
+func (s authServiceClient) Authenticate(ctx context.Context, in *auth_service.AuthRequest) (*auth_service.AuthResponse, error) {
         log.Printf("received authRequest of\n\tusername: %s\n\tpassword: %s\n", in.Username, in.Password)
         if in.Username == "admin" && in.Password == "password123" {
                 log.Println("Success!")
-                return &auth.AuthResponse {
+                return &auth_service.AuthResponse {
                         Success: true,
                 }, nil
         }
         log.Println("Failure!")
-        return &auth.AuthResponse {
+        return &auth_service.AuthResponse {
                 Success: false,
         }, nil
         
 }
 
-func (s myAuthServer) Logout(ctx context.Context, in *auth.LogoutRequest) (*auth.LogoutResponse, error) {
+func (s authServiceClient) Logout(ctx context.Context, in *auth_service.LogoutRequest) (*auth_service.LogoutResponse, error) {
         log.Printf("received LogoutRequest with token: %s", in.Token)
-        return &auth.LogoutResponse {
+        return &auth_service.LogoutResponse {
                 Success: true,
         }, nil
 }
 
-func (s myAuthServer) Ping(ctx context.Context, in *auth.PingRequest) (*auth.PingResponse, error) {
+func (s authServiceClient) Ping(ctx context.Context, in *auth_service.PingRequest) (*auth_service.PingResponse, error) {
         log.Printf("Received Ping int: %d", in.Ping)
-        return &auth.PingResponse {
+        return &auth_service.PingResponse {
                 Response: 1,
         }, nil
 }
 
-func (s myAuthServer) RefreshToken(ctx context.Context, in *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error) {
+func (s authServiceClient) RefreshToken(ctx context.Context, in *auth_service.RefreshTokenRequest) (*auth_service.RefreshTokenResponse, error) {
         log.Printf("received RefreshTokenRequest")
-        return &auth.RefreshTokenResponse {
+        return &auth_service.RefreshTokenResponse {
                 Token: "1",
         }, nil
 }
 
-func (s myAuthServer) RegisterOTPSeed(ctx context.Context, in *auth.RegisterOTPSeedRequest) (*auth.RegisterOTPSeedResponse, error) {
+func (s authServiceClient) RegisterOTPSeed(ctx context.Context, in *auth_service.RegisterOTPSeedRequest) (*auth_service.RegisterOTPSeedResponse, error) {
         log.Printf("received RegisterOPTSeed")
-        return &auth.RegisterOTPSeedResponse {
+        return &auth_service.RegisterOTPSeedResponse {
                 Success: true,
         }, nil
 }
 
-func (s myAuthServer) VerifyOTP(ctx context.Context, in *auth.VerifyOTPRequest) (*auth.VerifyOTPResponse, error) {
+func (s authServiceClient) VerifyOTP(ctx context.Context, in *auth_service.VerifyOTPRequest) (*auth_service.VerifyOTPResponse, error) {
         log.Printf("received VerifyOTPRequest")
-        return &auth.VerifyOTPResponse {
+        return &auth_service.VerifyOTPResponse {
                 Success: true,
                 Token: "1",
         }, nil
@@ -69,9 +69,9 @@ func main() {
         }
 
         serverRegistrar := grpc.NewServer()
-        service := &myAuthServer{}
+        service := &authServiceClient{}
 
-        auth.RegisterAuthServiceServer(serverRegistrar, service)
+        auth_service.RegisterAuthServiceServer(serverRegistrar, service)
 
         err = serverRegistrar.Serve(lis)
         if err != nil {

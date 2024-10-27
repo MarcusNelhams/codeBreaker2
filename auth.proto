@@ -1,18 +1,64 @@
 syntax = "proto3";
+option go_package = "github.com/MarcusNelhams/part3/auth_service"; // Replace with your module path
 
-package auth;
-
-option go_package = "github.com/MarcusNelhams/part3_go/auth"; // Replace with your module path
-
-service AuthService {
+service authService {
+    rpc Authenticate(AuthRequest) returns (AuthResponse);
+    rpc Logout(LogoutRequest) returns (LogoutResponse);
     rpc Ping(PingRequest) returns (PingResponse);
+    rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+    rpc RegisterOTPSeed(RegisterOTPSeedRequest) returns (RegisterOTPSeedResponse);
+    rpc VerifyOTP(VerifyOTPRequest) returns (VerifyOTPResponse);
+}
+
+message AuthRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message AuthResponse {
+    bool success = 1;
+}
+
+message LogoutRequest {
+    string token = 1;
+}
+
+message LogoutResponse {
+    bool success = 1;
 }
 
 message PingRequest {
-    string client_id = 1;
+    int64 ping = 1;
 }
 
 message PingResponse {
-    string message = 1;
+    int64 response = 1;
+}
+
+message RefreshTokenRequest {
+    string token = 1;
+}
+
+message RefreshTokenResponse {
+    string token = 1;
+}
+
+message RegisterOTPSeedRequest {
+    string username = 1;
+    int64 seed = 2;
+}
+
+message RegisterOTPSeedResponse {
+    bool success = 1;
+}
+
+message VerifyOTPRequest {
+    string username = 1;
+    int64 opt = 2;
+}
+
+message VerifyOTPResponse {
+    bool success = 1;
+    string token = 2;
 }
 
